@@ -1,0 +1,152 @@
+\documentclass[a4paper,11pt,oneside]{book}
+\usepackage[top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{changepage}
+\usepackage{framed}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\bibliographystyle{abbrvnat}
+
+% Make list items more compact
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep, topsep=0pt}
+
+[- IMPORTS -]
+
+% Add tcolorbox for styling code cells
+\usepackage[most,breakable]{tcolorbox}
+\usepackage{fancyvrb}
+
+% Define colors for code cells
+\definecolor{codeinputbg}{RGB}{245, 245, 250}  % Light blue-gray background
+\definecolor{codeinputborder}{RGB}{100, 100, 150}  % Blue-gray border
+\definecolor{codeoutputbg}{RGB}{250, 250, 245}  % Light beige background
+\definecolor{codeoutputborder}{RGB}{150, 150, 100}  % Beige border
+
+% Create custom verbatim environments for code input and output
+% We'll use a counter to alternate between input and output styles
+\newcounter{codecell}
+\setcounter{codecell}{0}
+
+% Redefine verbatim to use tcolorbox with alternating styles
+% Use fancyvrb's SaveVerbatim to capture content, then display in tcolorbox
+\newcounter{verbatimsave}
+\setcounter{verbatimsave}{0}
+
+\renewenvironment{verbatim}{%
+  \stepcounter{codecell}%
+  \stepcounter{verbatimsave}%
+  \VerbatimEnvironment
+  % Save the current counter value before checking
+  \edef\currentcodecell{\the\value{codecell}}%
+  \begin{VerbatimOut}{\jobname-vb-\theverbatimsave.tmp}%
+}{%
+  \end{VerbatimOut}%
+  % Check if odd (input) or even (output) using saved value
+  \ifodd\currentcodecell
+    % Odd counter = input (code)
+    \begin{tcolorbox}[
+      colback=codeinputbg,
+      colframe=codeinputborder,
+      boxrule=0.5pt,
+      arc=2mm,
+      left=3mm,
+      right=3mm,
+      top=2mm,
+      bottom=2mm,
+      fonttitle=\bfseries\small,
+      title=Input,
+      breakable
+    ]%
+    \verbatiminput{\jobname-vb-\theverbatimsave.tmp}%
+    \end{tcolorbox}%
+  \else%
+    % Even counter = output
+    \begin{tcolorbox}[
+      colback=codeoutputbg,
+      colframe=codeoutputborder,
+      boxrule=0.5pt,
+      arc=2mm,
+      left=3mm,
+      right=3mm,
+      top=2mm,
+      bottom=2mm,
+      fonttitle=\bfseries\small,
+      title=Output,
+      breakable
+    ]%
+    \verbatiminput{\jobname-vb-\theverbatimsave.tmp}%
+    \end{tcolorbox}%
+  \fi%
+}
+
+\hypersetup{
+  colorlinks,
+  linkcolor={black},
+  citecolor={black},
+  urlcolor={black}
+}
+
+% Style quotes
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.55}
+\definecolor{quoteshade}{rgb}{0.95, 0.95, 1}
+\renewenvironment{quote}{%
+  \def\FrameCommand{%
+    \hspace{1pt}%
+    {\color{darkblue}\vrule width 2pt}%
+    {\color{quoteshade}\vrule width 4pt}%
+    \colorbox{quoteshade}%
+  }%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}%
+  \noindent\hspace{-8pt}% disable indenting first paragraph
+  \begin{adjustwidth}{0pt}{0pt}% adjust as needed
+  \vspace{2pt}\vspace{2pt}%
+}
+{%
+  \vspace{2pt}\end{adjustwidth}\endMakeFramed%
+}
+
+\title{\Huge \textbf{[-doc.title-]}[# if doc.subtitle #] \\ \huge [-doc.subtitle-][# endif #]}
+\author{\textsc{
+[#- for author in doc.authors #]
+  [#- if not loop.first #] and [# endif #][-author.name-][# if not loop.last and not loop.first #], [# endif #]
+[#- endfor -#]
+}}
+
+\begin{document}
+\sloppy
+
+\frontmatter
+\maketitle
+
+\tableofcontents
+% \listoffigures
+% \listoftables
+
+\mainmatter
+
+% Fix section numbering: make sections number independently (1, 2, 3...) 
+% instead of as subsections of chapter 0 (0.1, 0.2, 0.3...)
+\setcounter{chapter}{0}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+
+% \include{preface.tex}
+% \include{acknowledgements.tex}
+
+[- CONTENT -]
+
+
+[# if doc.bibliography #]
+\bibliography{[- doc.bibliography | join(", ") -]}
+[# endif #]
+
+\end{document}
+

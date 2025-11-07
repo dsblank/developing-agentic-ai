@@ -1,0 +1,36 @@
+myst: v1
+title: Custom LaTeX Book with Styled Code Cells
+description: A plain latex book theme with styled code cell inputs and outputs
+version: '1.0.0'
+authors:
+  - name: Custom Template
+license: CC-BY-4.0
+tags:
+  - book
+doc:
+  - id: title
+    required: true
+  - id: subtitle
+  - id: authors
+    required: true
+  - id: bibliography
+files:
+  - template.tex
+packages:
+  - babel
+  - caption
+  - enumitem
+  - fontenc
+  - framed
+  - geometry
+  - graphicx
+  - hyperref
+  - inputenc
+  - lmodern
+  - natbib
+  - xcolor
+  - changepage
+  - amssymb
+  - tcolorbox
+  - fancyvrb
+

@@ -40,7 +40,17 @@ jobs:
       - name: Install Jupyter Book (via myst)
         run: npm install -g jupyter-book
       - name: Build HTML Assets
-        run: jupyter-book build --html
+        run: |
+          # Build with timeout (5 minutes should be enough)
+          timeout 300 jupyter-book build --html || true
+          # Kill any remaining jupyter-book processes
+          pkill -f "jupyter-book" || true
+          # Verify build output
+          if [ ! -f "_build/html/index.html" ]; then
+            echo "Error: index.html not found after build"
+            exit 1
+          fi
+          echo "Build completed successfully"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

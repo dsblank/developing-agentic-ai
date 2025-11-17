@@ -1,8 +1,9 @@
-.PHONY: build clean help
+.PHONY: build clean help serve
 
 help:
 	@echo "Available targets:"
 	@echo "  build  - Build the Jupyter Book with custom LaTeX template"
+	@echo "  serve  - Start development server with live reload"
 	@echo "  clean  - Clean build artifacts"
 	@echo "  pdf    - Build only the PDF (faster)"
 
@@ -13,6 +14,12 @@ build: setup-template
 pdf: setup-template
 	@echo "📄 Building PDF only..."
 	jupyter book build --pdf
+
+serve:
+	@echo "🚀 Starting development server with live reload..."
+	@echo "   The server will automatically rebuild when you make changes."
+	@echo "   Press Ctrl+C to stop the server."
+	jupyter book start
 
 setup-template:
 	@echo "📋 Setting up custom LaTeX template..."

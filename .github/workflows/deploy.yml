@@ -34,20 +34,33 @@ jobs:
         uses: actions/configure-pages@v3
         with:
           enablement: true
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-python@v5
         with:
-          node-version: 18.x
-      - name: Install Jupyter Book (via myst)
-        run: npm install -g jupyter-book
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          pip install jupyter-book mystmd[book]
+      - name: Setup custom LaTeX template
+        run: |
+          mkdir -p _build/templates/tex/myst/custom_latex_book
+          cp templates/tex/custom/* _build/templates/tex/myst/custom_latex_book/ 2>/dev/null || echo "⚠️  Warning: Template files not found"
       - name: Build HTML Assets
         run: |
-          # Build with timeout (5 minutes should be enough)
-          timeout 300 jupyter-book build --html || true
+          # Build static HTML (not site, which uses myst.yml site config)
+          # The --html flag builds to _build/html/ for static deployment
+          timeout 300 jupyter book build --html --ci || true
           # Kill any remaining jupyter-book processes
           pkill -f "jupyter-book" || true
-          # Verify build output
-          if [ ! -f "_build/html/index.html" ]; then
+          # Check for output in either location
+          if [ -f "_build/html/index.html" ]; then
+            echo "✓ Build output found at _build/html/index.html"
+          elif [ -f "_build/site/public/index.html" ] || [ -f "_build/site/index.html" ]; then
+            echo "⚠️  Build output found in _build/site/, copying to _build/html/"
+            mkdir -p _build/html
+            cp -r _build/site/public/* _build/html/ 2>/dev/null || cp -r _build/site/* _build/html/ 2>/dev/null || true
+          else
             echo "Error: index.html not found after build"
+            ls -la _build/ || true
             exit 1
           fi
           echo "Build completed successfully"

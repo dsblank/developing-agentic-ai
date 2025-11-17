@@ -49,7 +49,61 @@ The build scripts automatically copy the template from source to the build locat
 ## Output Files
 
 - **PDF**: `_build/exports/intro.pdf`
-- **Site**: `_build/site/` (HTML website)
+- **Site**: `_build/site/` (HTML website from `myst.yml` site config)
+- **Static HTML**: `_build/html/` (static HTML for deployment)
+
+## Running Locally
+
+### Development Server (Recommended)
+
+For development with live reload that automatically reflects changes:
+
+```bash
+# Using Make
+make serve
+
+# Or directly
+jupyter book start
+```
+
+This will:
+- Start a development server with hot reload
+- Automatically rebuild when you edit your markdown files
+- Open in your browser (typically at http://localhost:3000)
+- Watch for changes and refresh automatically
+
+Press `Ctrl+C` to stop the server.
+
+### Static Server
+
+To view a pre-built site in a web browser:
+
+```bash
+# Build the HTML site first
+jupyter book build --html
+
+# Serve the built site (if it outputs to _build/html/)
+python3 -m http.server 8000 --directory _build/html
+
+# Or if it outputs to _build/site/public/
+python3 -m http.server 8000 --directory _build/site/public
+```
+
+Then open http://localhost:8000 in your browser.
+
+## Local vs GitHub Actions Configuration
+
+**Local builds** use:
+- Python `jupyter-book` package
+- Command: `jupyter book build` (with space)
+- Respects `myst.yml` configuration
+- May output to `_build/site/` when `site:` is configured in `myst.yml`
+
+**GitHub Actions** uses:
+- Python `jupyter-book` package (aligned with local)
+- Command: `jupyter book build --html --ci`
+- Builds static HTML to `_build/html/` for deployment
+- Automatically handles output location differences
 
 ## Troubleshooting
 

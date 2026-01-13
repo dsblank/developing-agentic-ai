@@ -1,5 +1,6 @@
 import inspect
 import typing
+
 from rich.console import Console
 from rich.markdown import Markdown
 

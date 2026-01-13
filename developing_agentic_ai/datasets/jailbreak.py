@@ -170,6 +170,7 @@ def create_jailbreak_dataset():
         item = {
             "question": prompt,
             "category": category,
+            "description": description,
         }
         dataset_items.append(item)
 
@@ -182,7 +183,7 @@ def create_jailbreak_dataset():
     print(f"{'='*60}")
     print(f"Dataset ID: {dataset.id}")
     print(f"Total items: {len(dataset_items)}")
-    print(f"\nCategories:")
+    print("\nCategories:")
     print(
         f"  - obfuscation: {sum(1 for item in dataset_items if item['category'] == 'obfuscation')} items"
     )
@@ -199,5 +200,5 @@ def create_jailbreak_dataset():
         f"  - system_override: {sum(1 for item in dataset_items if item['category'] == 'system_override')} items"
     )
     print(
-        f"\nYou can now use this dataset for evaluating model security and prompt injection defenses."
+        "\nYou can now use this dataset for evaluating model security and prompt injection defenses."
     )

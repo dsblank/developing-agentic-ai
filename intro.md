@@ -13,6 +13,7 @@ Unsurprisingly, this book is about three things:
 Agentic AI represents a paradigm shift in artificial intelligence, moving beyond simple prompt-response interactions to systems that can autonomously reason, plan, and execute complex tasks. Unlike traditional AI models that respond to individual queries, agentic systems maintain context, make decisions, and use tools to accomplish multi-step objectives.
 
 An agentic AI system is characterized by its ability to:
+
 - **Reason** about problems and break them down into manageable steps
 - **Plan** sequences of actions to achieve goals
 - **Execute** actions using available tools and resources

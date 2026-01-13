@@ -9,6 +9,7 @@ Building an agentic system involves combining the core concepts we learned in Ch
 ### Step 1: Define the Problem and Scope
 
 Before writing any code, clearly define:
+
 - **What problem** are you solving?
 - **What tasks** should the agent be able to perform?
 - **What constraints** exist (time, cost, accuracy requirements)?
@@ -21,18 +22,21 @@ Example: "Build an agent that helps users research and summarize information fro
 Design your agent's architecture by determining:
 
 **Agent Type**: Will your agent be:
+
 - **Single-turn**: Responds to individual queries independently
 - **Multi-turn**: Maintains conversation context across interactions
 - **Autonomous**: Works toward goals with minimal human intervention
 - **Collaborative**: Works alongside humans, asking for clarification when needed
 
 **Tool Selection**: Identify which tools your agent needs:
+
 - Research tools (web search, database queries)
 - Action tools (API calls, file operations)
 - Analysis tools (data processing, calculations)
 - Communication tools (email, notifications)
 
 **Prompt Strategy**: Plan your prompt structure:
+
 - How will you describe the agent's role?
 - What examples will you include?
 - How will you format tool descriptions?
@@ -43,6 +47,7 @@ Design your agent's architecture by determining:
 With Opik, you'll implement:
 
 **1. Tool Definitions**
+
 ```python
 from opik import Tool
 
@@ -57,6 +62,7 @@ def web_search(query: str, max_results: int = 5) -> dict:
 
 **2. System Prompt**
 Create a comprehensive system prompt that:
+
 - Defines the agent's role and capabilities
 - Lists available tools with clear descriptions
 - Provides examples of good behavior
@@ -64,12 +70,14 @@ Create a comprehensive system prompt that:
 
 **3. LLM Configuration**
 Configure your LLM provider:
+
 - Choose the model (GPT-4, Claude, local model, etc.)
 - Set parameters (temperature, max tokens)
 - Configure retry logic and error handling
 
 **4. Thread Management**
 Set up thread handling for:
+
 - Creating new conversations
 - Maintaining context across turns
 - Storing session-specific state
@@ -91,6 +99,7 @@ The core agent loop typically follows this pattern:
 Integrate Opik's observability features:
 
 **Trace Collection**: Ensure all agent interactions are traced
+
 ```python
 from opik import trace
 
@@ -101,12 +110,14 @@ def agent_process(user_input: str):
 ```
 
 **Span Creation**: Create spans for major operations
+
 ```python
 with span("tool_execution", tool_name="web_search"):
     results = web_search(query)
 ```
 
 **Metric Tracking**: Track key metrics
+
 ```python
 from opik import record_metric
 
@@ -119,6 +130,7 @@ record_metric("tool_calls", num_calls)
 Build datasets to test your agent:
 
 **Test Cases**: Create representative examples covering:
+
 - Common use cases
 - Edge cases and error conditions
 - Different difficulty levels
@@ -133,6 +145,7 @@ Build datasets to test your agent:
 Use Opik's experiment framework to:
 
 **Test Variations**: Try different:
+
 - System prompts
 - Tool configurations
 - LLM parameters
@@ -147,11 +160,13 @@ Use Opik's experiment framework to:
 Once your agent is performing well:
 
 **Deploy**: Make your agent available to users
+
 - API endpoints
 - Web interface
 - Integration with existing systems
 
 **Monitor**: Use Opik to track:
+
 - Real-world performance metrics
 - Error rates and types
 - User satisfaction
@@ -214,6 +229,7 @@ Prompt engineering is an iterative process. Test different approaches and measur
 ### 5. Handle Errors Gracefully
 
 Agents will encounter errors. Design robust error handling:
+
 - Tool failures
 - Invalid inputs
 - Timeouts

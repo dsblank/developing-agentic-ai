@@ -1,6 +1,7 @@
-import requests
 import json
-from typing import Optional, cast
+from typing import Optional
+
+import requests
 
 
 def filter_info(data):
@@ -13,6 +14,8 @@ def filter_info(data):
 
 def get_weather(city: str, state: Optional[str] = None, country: Optional[str] = None) -> str:
     """
+    Weather data by Open-Meteo.com, Attribution 4.0 International (CC BY 4.0).
+
     Get current weather for a city with optional state/country filtering.
     Falls back to first result if exact match not found.
 
@@ -76,7 +79,8 @@ def get_weather(city: str, state: Optional[str] = None, country: Optional[str] =
             "city": chosen["name"],
             "state": chosen.get("admin1"),
             "country": chosen.get("country", ""),
-            "temperature": weather_data["current_weather"]["temperature"],
+            "temperature": (weather_data["current_weather"]["temperature"] * 1.8) + 32,
+            "temperature-units": "Fahrenheit",
             "windspeed": weather_data["current_weather"]["windspeed"],
         }
     )

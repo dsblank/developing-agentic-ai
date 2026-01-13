@@ -165,12 +165,12 @@ def create_jailbreak_dataset():
             description = "Logical tricks, conditional statements, and edge-case exploits"
         else:
             category = "system_override"
-            description = "Direct attempts to override system instructions or access internal state"
+            description = "Direct attempts to override system instructions or access internal state"  # noqa: F841
 
         item = {
             "question": prompt,
             "category": category,
-            "description": description,
+            # "description": description,
         }
         dataset_items.append(item)
 

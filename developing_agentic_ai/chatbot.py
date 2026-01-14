@@ -296,12 +296,23 @@ class Chatbot:
         self.thread_id = str(uuid.uuid4())
         self.clear_messages()
 
+    def get_user_input(self, prompt: str = ">>> ") -> str:
+        """
+        Ask the user for input
+        """
+        try:
+            user_text = input(">>> ")
+        except EOFError:
+            user_text = "exit"
+        return user_text
+
     def start(self):
         """Start the interactive chat loop."""
-        user_text = input(">>> ")
+        user_text = self.get_user_input()
         while user_text != "exit":
             self.chat(user_text)
-            user_text = input(">>> ")
+            user_text = self.get_user_input()
+        print("")
 
     @track
     def chat(self, user_text: str) -> str:

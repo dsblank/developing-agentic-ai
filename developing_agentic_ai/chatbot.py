@@ -1,7 +1,7 @@
 import json
 import os
 import uuid
-from typing import Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import litellm
 from litellm.utils import get_llm_provider
@@ -71,7 +71,10 @@ def extract_provider_from_model(model: str) -> Tuple[Optional[str], str]:
     # Try using litellm's get_llm_provider function
     provider = None
     try:
-        _, provider, _ = get_llm_provider(model=model)
+        result = get_llm_provider(model=model)
+        # get_llm_provider returns a tuple, extract provider (second element)
+        if len(result) >= 2:
+            provider = result[1]
         if provider:
             provider = provider.lower() if isinstance(provider, str) else None
     except Exception:
@@ -137,7 +140,8 @@ def update_opik_span_and_trace_with_usage(model: str, resp) -> None:
                 update_kwargs["provider"] = provider
 
             try:
-                opik_context.update_current_span(**update_kwargs)
+                # Type ignore needed because opik's type stubs don't handle **kwargs well
+                opik_context.update_current_span(**update_kwargs)  # type: ignore[arg-type]
 
                 # Also update trace metadata with provider and model for cost estimation
                 # Note: Usage is aggregated automatically by Opik from spans, we just need provider/model
@@ -184,8 +188,13 @@ def update_opik_span_and_trace_with_usage(model: str, resp) -> None:
         pass
 
 
-@track(name="llm_completion", type="llm")
-def _call_llm_with_tracing(model, messages, tools=None, **kwargs):
+@track(name="llm_completion", type="llm")  # type: ignore[misc]
+def _call_llm_with_tracing(
+    model: str,
+    messages: List[Dict[str, Any]],
+    tools: Optional[List[Dict[str, Any]]] = None,
+    **kwargs: Any,
+) -> Any:
     """Call LLM with proper Opik span management within the current trace.
 
     Uses @track decorator to ensure it creates a span within the existing trace.
@@ -217,14 +226,21 @@ def _call_llm_with_tracing(model, messages, tools=None, **kwargs):
         raise
 
 
-@track
-def chat_with_tools(user_text: str, model: str, messages: list, tools: list, thread_id: str = None):
+@track  # type: ignore[misc]
+def chat_with_tools(
+    user_text: str,
+    model: str,
+    messages: List[Dict[str, Any]],
+    tools: Dict[str, Callable[..., Any]],
+    thread_id: Optional[str] = None,
+) -> str:
     """Chat function that handles LLM calls with tool execution."""
     # Update trace context with thread_id if provided (like reference does)
     if thread_id:
         try:
             context_updates = {"thread_id": thread_id}
-            opik_context.update_current_trace(**context_updates)
+            # Type ignore needed because opik's type stubs don't handle **kwargs well
+            opik_context.update_current_trace(**context_updates)  # type: ignore[arg-type]
         except Exception:
             pass
 
@@ -286,7 +302,10 @@ def chat_with_tools(user_text: str, model: str, messages: list, tools: list, thr
 
 class Chatbot:
     def __init__(
-        self, model: str, system_prompt: str = "Please answer the question", tools: list = None
+        self,
+        model: str,
+        system_prompt: str = "Please answer the question",
+        tools: Optional[Dict[str, Callable[..., Any]]] = None,
     ):
         """Initialize chatbot with model, system prompt, and tools."""
         self.model = model
@@ -314,10 +333,11 @@ class Chatbot:
             user_text = self.get_user_input()
         print("")
 
-    @track
+    @track  # type: ignore[misc]
     def chat(self, user_text: str) -> str:
         """Chat method that creates a trace and delegates to chat_with_tools."""
-        return chat_with_tools(
+        # Type ignore needed because @track decorator interferes with type checking
+        return chat_with_tools(  # type: ignore[call-arg,return-value]
             user_text=user_text,
             model=self.model,
             messages=self.messages,

@@ -42,10 +42,12 @@ jobs:
           pip install jupyter-book mystmd[book]
       - name: Setup custom LaTeX template
         run: |
+          cd book
           mkdir -p _build/templates/tex/myst/custom_latex_book
           cp templates/tex/custom/* _build/templates/tex/myst/custom_latex_book/ 2>/dev/null || echo "⚠️  Warning: Template files not found"
       - name: Build HTML Assets
         run: |
+          cd book
           # Build static HTML (not site, which uses myst.yml site config)
           # The --html flag builds to _build/html/ for static deployment
           timeout 300 jupyter book build --html --ci || true
@@ -67,7 +69,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './_build/html'
+          path: './book/_build/html'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
